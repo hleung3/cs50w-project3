@@ -63,29 +63,29 @@ for item in PIZZANAMES:
 PIZZAS = (
     # Toppings (Cheese 0,1-3 Toppings, Special 5)
     # Regular Small (1,1)
-    (1, 1, 0, Decimal("12.20")),
-    (1, 1, 1, Decimal("13.20")),
-    (1, 1, 2, Decimal("14.70")),
-    (1, 1, 3, Decimal("15.70")),
-    (1, 1, 5, Decimal("17.25")),
+    (1, 1, 0, Decimal("12.70")),
+    (1, 1, 1, Decimal("13.70")),
+    (1, 1, 2, Decimal("15.20")),
+    (1, 1, 3, Decimal("16.20")),
+    (1, 1, 5, Decimal("17.75")),
     # Regular Large (1,2)
-    (1, 2, 0, Decimal("17.45")),
-    (1, 2, 1, Decimal("19.45")),
-    (1, 2, 2, Decimal("21.45")),
-    (1, 2, 3, Decimal("23.45")),
-    (1, 2, 5, Decimal("25.45")),
+    (1, 2, 0, Decimal("17.95")),
+    (1, 2, 1, Decimal("19.95")),
+    (1, 2, 2, Decimal("21.95")),
+    (1, 2, 3, Decimal("23.95")),
+    (1, 2, 5, Decimal("25.95")),
     # Sicilian Small (2,1)
-    (2, 1, 0, Decimal("23.45")),
-    (2, 1, 1, Decimal("25.45")),
-    (2, 1, 2, Decimal("27.45")),
-    (2, 1, 3, Decimal("28.45")),
-    (2, 1, 5, Decimal("29.45")),
+    (2, 1, 0, Decimal("24.45")),
+    (2, 1, 1, Decimal("26.45")),
+    (2, 1, 2, Decimal("28.45")),
+    (2, 1, 3, Decimal("29.45")),
+    (2, 1, 5, Decimal("30.45")),
     # Sicilian Large (2,2)
-    (2, 2, 0, Decimal("37.70")),
-    (2, 2, 1, Decimal("39.70")),
-    (2, 2, 2, Decimal("41.70")),
-    (2, 2, 3, Decimal("43.70")),
-    (2, 2, 5, Decimal("44.70")),
+    (2, 2, 0, Decimal("38.70")),
+    (2, 2, 1, Decimal("40.70")),
+    (2, 2, 2, Decimal("42.70")),
+    (2, 2, 3, Decimal("44.70")),
+    (2, 2, 5, Decimal("45.70")),
 )
 for item in PIZZAS:
     f = Pizza(
@@ -144,7 +144,7 @@ SUBS = (
     (10, 1, Decimal("6.95")),
     (10, 2, Decimal("8.50")),
     (11, 2, Decimal("8.50")),
-    (12, 1, Decimal("4.50")),
+    (12, 1, Decimal("4.60")),
     (12, 2, Decimal("6.95")),
     (13, 1, Decimal("5.10")),
     (13, 2, Decimal("7.45")),
@@ -208,18 +208,18 @@ for item in DINNERPLATTERNAMES:
 
 # DinnerPlatter
 DINNERPLATTERS = (
-    (1, 1, Decimal("35.00")),
-    (1, 2, Decimal("60.00")),
-    (2, 1, Decimal("45.00")),
-    (2, 2, Decimal("70.00")),
-    (3, 1, Decimal("45.00")),
-    (3, 2, Decimal("70.00")),
-    (4, 1, Decimal("35.00")),
-    (4, 2, Decimal("60.00")),
-    (5, 1, Decimal("45.00")),
-    (5, 2, Decimal("70.00")),
-    (6, 1, Decimal("45.00")),
-    (6, 2, Decimal("80.00")),
+    (1, 1, Decimal("40.00")),
+    (1, 2, Decimal("65.00")),
+    (2, 1, Decimal("50.00")),
+    (2, 2, Decimal("75.00")),
+    (3, 1, Decimal("50.00")),
+    (3, 2, Decimal("75.00")),
+    (4, 1, Decimal("40.00")),
+    (4, 2, Decimal("65.00")),
+    (5, 1, Decimal("50.00")),
+    (5, 2, Decimal("75.00")),
+    (6, 1, Decimal("55.00")),
+    (6, 2, Decimal("85.00")),
 )
 for item in DINNERPLATTERS:
     f = DinnerPlatter(

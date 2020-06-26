@@ -7,33 +7,16 @@
 
 {% block maintitle %}
   {% load static %}
-  <script src="{% static 'orders/js/scripts.js' %}"></script>
+  <script src="{% static 'orders/js/index.js' %}"></script>
   <style media="screen">
-    .col {
-      margin:auto
-    }
-    .order-button {
-      float:right
-    }
-    .topping-checkbox {
-      margin-right:5px;
-      width:20px;
-      height:20px
-    }
-    .steak-cheese {
-      display:none
-    }
   </style>
 {% endblock %}
 
 {% block content %}
   <!-- Place modal window here -->
   <!-- <div id="modal-placeholder"></div> -->
-
+  <br>
   <!-- Pizzas -->
-  <div class="project-group text-center">
-  </div>
-  --> make these divs collapsible
   <h5 style="margin:auto">Pizzas</h5>
   {% include "orders/pizza.html" %}
 
@@ -42,15 +25,9 @@
 
   <!-- Pastas -->
   {% include "orders/pasta.html"%}
-  <div class="row border" style="padding:2%">
-    <h5 style="margin:auto">Pasta</h5>
-  </div>
 
   <!-- Salads -->
   {% include "orders/salads.html"%}
-  <div class="row border" style="padding:2%">
-    <h5 style="margin:auto">Salad</h5>
-  </div>
 
   <!-- Dinner Platters -->
   {% include "orders/dinner.html"%}

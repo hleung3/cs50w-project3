@@ -5,7 +5,7 @@
       <img src="media/no_photo.png" alt="No photo" style="width:100px">
     </div>
     <!-- pizza type -->
-    <div class="col dropdown form-group" style="">
+    <div class="dropdown form-group" style="">
       <label for="product_name">Pizza Types</label>
       <select class="form-control" name="product_name">
           <option value="" selected="selected">Select..</option>
@@ -16,7 +16,7 @@
       </select>
     </div>
     <!-- PIZZA SIZE -->
-    <div class="col dropdown form-group" >
+    <div class="dropdown form-group" >
       <label for="pizza_size">Sizes</label>
       <select class="form-control" name="pizza_size">
         <option value="" selected="selected">Select..</option>
@@ -30,7 +30,7 @@
       </div>
     </div>
     <!-- # of Toppings -->
-    <div class="form-group" style="margin:auto">
+    <div class="col dropdown form-group">
       <label for="num_toppings"># of Toppings</label>
       <select class="form-control" name="num_toppings">
         <option value="" selected="selected">Select..</option>
@@ -47,7 +47,7 @@
       </select>
     </div>
     <!-- Toppings -->
-    <div class="form-group" style="margin:2%">
+    <div class="form-group" style="margin-right:2%">
       <label for="list_toppings">Toppings</label>
       <select class="form-control" name="list_toppings" multiple="multiple">
         <option value="0" selected="selected">Select..</option>
@@ -57,12 +57,13 @@
         {% endfor %}
       </select>
     </div>
-    <div class="col" style="float:right">
-      <input id="pizza-number" type="number" placeholder="Quantity" name="" value="">
+    <!-- Quantity -->
+    <div class="col form-group" style="margin:auto">
+        <label for="quantity">Please Enter a Number</label>
+      <input class="col" id="pizza-number" type="number" placeholder="Quantity" name="" value="">
     </div>
     <!-- Buttons -->
     <div class="col" style="padding-top:1%">
-      <!-- Quantity -->
       {% if user.is_authenticated %}
         <button type="submit" class="pizza-order order-button btn btn-danger"
           name="button" data-product-class="PizzaName" data-form-name="Pizza">

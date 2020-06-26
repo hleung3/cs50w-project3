@@ -14,6 +14,7 @@ function removeFromCart(order_class, order_id) {
   });
 }
 
+
 function setOrderPrice(order_price) {
   const span = document.querySelector("#order-price");
   if ((span === null) || (span === undefined)) {
@@ -22,22 +23,6 @@ function setOrderPrice(order_price) {
   span.innerText = "$" + order_price;
 
   const a = span.closest("a");
-  if (order_price == 0) {
-    if (!a.classList.contains("disabled")) {
-      a.classList.add("disabled");
-    }
-
-    // Disable clicking
-    a.href = "#";
-    a.onclick = () => {
-      return false;
-    };
-
-  } else {
-    if (a.classList.contains("disabled")) {
-      a.classList.remove("disabled");
-    }
-  }
 
   const strong = document.querySelector("#overall-price");
   if (strong !== null) {

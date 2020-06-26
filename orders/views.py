@@ -11,7 +11,7 @@ from .models import Order, OrderPizza, OrderSub, OrderPasta, OrderSalad, OrderDi
 
 
 def index(request):
-    # retrieve all menu items from DB and redner with index.html
+    # retrieve all menu data from DB and render with index.html
     context = {
         "pizza_names": PizzaName.objects.all(),
         "sizes": Size.objects.all(),
@@ -23,7 +23,6 @@ def index(request):
         "salads": Salad.objects.all(),
         "dinner_platters": DinnerPlatterName.objects.all()
     }
-    # print(context)
     return render(request, "orders/index.html", context=context)
 
 
@@ -83,10 +82,9 @@ def logout_view(request):
 def add_to_cart(request):
     if request.method == "GET":
         # no GET access
-        print("no access")
         return HttpResponseNotAllowed()
-    print(request.POST)
-    # get orders made by user and not sent/confirmed
+
+    # get orders made by user and not sent
     order = Order.objects.filter(user__pk=request.user.id).filter(order_sent=False)
     if order.count() == 0:
         # ^no orders found --> create new order for user
@@ -96,18 +94,17 @@ def add_to_cart(request):
         # select first order found
         order = order[0]
 
-    # Get product data from request
-    print("ASDFaa11")
+    # Get product data from client request
     try:
         product_class = request.POST["product_class"]
+        # product_name is actually the product ID
         product_name = request.POST["product_name"]
-        # product_id = int(request.POST["product_id"])
     except (KeyError, ValueError):
         return HttpResponseBadRequest()
 
-    # Get other request parameters
+    # get quantity of product order
     quantity = int(request.POST["quantity"])
-    print(quantity,product_name)
+
     # Add to order_(food) in DB i.e. save food details to order_(food) table
     #                                and link to unsent order by user
     if product_class == "DinnerPlatterName":
@@ -151,6 +148,7 @@ def add_to_cart(request):
             quantity=quantity
         )
         order_sub.save()
+        # get toppings added to sub
         for addon_id in request.POST.get("subaddons", []).split(","):
             order_sub.sub_addons.add(
                 SubAddon.objects.get(pk=int(addon_id))
@@ -159,9 +157,7 @@ def add_to_cart(request):
 
         order.save()
     elif product_class == "PizzaName":
-        print(request.POST["pizza_size"])
         query_size = Size.objects.get(name=request.POST["pizza_size"])
-        print(query_size)
         order_pizza = OrderPizza(
             order=order,
             pizza=Pizza.objects.get(
@@ -182,10 +178,8 @@ def add_to_cart(request):
 
         order.save()
     else:
-        print("ASASDF")
         return HttpResponseNotFound()
 
-    print("GOOD")
     return JsonResponse({
         "order_price": order.get_order_price(),
         "order_id": order.id
@@ -213,89 +207,8 @@ def remove_from_cart(request):
 
 
 @csrf_exempt
-def get_sizes(request):
-    if request.method == "GET":
-        return HttpResponseNotAllowed()
-
-    product_class = request.POST["product_class"]
-    product_id = request.POST["product_id"]
-    # select size info for each product type --> return as JSON
-    if product_class == "DinnerPlatterName":
-        objects = DinnerPlatter.objects.filter(name__pk=product_id)
-        sizes = [{"size_name": x.size.name, "size_value": x.size.pk} for x in objects]
-    elif product_class == "Sub":
-        objects = Sub.objects.filter(name__pk=product_id)
-        sizes = [{"size_name": x.size.name, "size_value": x.size.pk} for x in objects]
-    elif product_class == "PizzaName":
-        objects = Pizza.objects.filter(name__pk=product_id)
-        sizes_ids = set([x.size.id for x in objects])
-        sizes = [{"size_name": Size.objects.get(pk=x).name, "size_value": x} for x in sizes_ids]
-    else:
-        return HttpResponseNotFound()
-
-    if sizes:
-        return JsonResponse(sizes, safe=False)
-    else:
-        return HttpResponseNotFound()
-
-
-@csrf_exempt
-def get_subs_addons(request):
-    if request.method == "GET":
-        return HttpResponseNotAllowed()
-
-    addons_all = SubAddon.objects.all()
-    addons = []
-    if addons_all.count() > 0:
-        addons = [{"subaddon_name": x.name, "subaddon_value": x.pk} for x in addons_all]
-
-    return JsonResponse(addons, safe=False)
-
-
-@csrf_exempt
-def get_toppings(request):
-    if request.method == "GET":
-        return HttpResponseNotAllowed()
-
-    toppings_all = Topping.objects.all()
-    toppings = []
-    if toppings_all.count() > 0:
-        toppings = [{"topping_name": x.name, "topping_value": x.pk} for x in toppings_all]
-
-    return JsonResponse(toppings, safe=False)
-
-# @csrf_exempt
-# def get_pizza(request):
-#     print("get-pizza")
-#     if request.method == "GET":
-#         return HttpResponseNotAllowed()
-#
-#     pizza_all = Pizzas.objects.all()
-#     toppings = []
-#     if toppings_all.count() > 0:
-#         toppings = [{"topping_name": x.name, "topping_value": x.pk} for x in toppings_all]
-#
-#     return JsonResponse(toppings, safe=False)
-
-@csrf_exempt
-def get_toppings_count(request):
-    if request.method == "GET":
-        return HttpResponseNotAllowed()
-
-    product_id = request.POST["product_id"]
-
-    toppings_counts_all = Pizza.objects.filter(
-        name=PizzaName.objects.get(pk=product_id)
-    ).all()
-    toppings = []
-    if toppings_counts_all.count() > 0:
-        toppings = list(set([x.toppings_count for x in toppings_counts_all]))
-
-    return JsonResponse(toppings, safe=False)
-
-
-@csrf_exempt
 def get_current_order_price(request):
+    # client request to get users order total
     if request.method == "GET":
         return HttpResponseNotAllowed()
 
@@ -312,6 +225,7 @@ def get_current_order_price(request):
 
 @csrf_exempt
 def confirm_order_final(request):
+    # on button click --> order is sent
     if request.method == "POST":
         # select tentative orders created by current user
         order = Order.objects.filter(user__pk=request.user.id).filter(order_sent=False)
@@ -333,6 +247,7 @@ def confirm_order_final(request):
 
 @csrf_exempt
 def cancel_order(request):
+    # delete order made by users
     if request.method == "GET":
         return HttpResponseNotAllowed()
 
@@ -349,6 +264,7 @@ def cancel_order(request):
 
 @login_required
 def order(request, order_id=None):
+    # render order page
     context = {
         "order_exists": False
     }
@@ -397,6 +313,7 @@ def order(request, order_id=None):
 
 @login_required
 def orders_history(request):
+    # render history page
     context = {
         "orders": []
     }

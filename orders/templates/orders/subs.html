@@ -5,7 +5,7 @@
     <div class="col">
       <img src="media/no_photo.png" alt="No photo" style="width:100px">
     </div>
-    <div class="col dropdown form-group">
+    <div class=" dropdown form-group">
       <label for="product_name">Sub Types</label>
       <select id="sub-type" class="form-control" name="product_name">
         <option value="0">Select ..</option>
@@ -14,7 +14,7 @@
         {% endfor %}
       </select>
     </div>
-    <div class="col dropdown form-group">
+    <div class="col-3 dropdown form-group">
       <label for="subaddons"> Sub Addons</label>
       <select class="form-control" name="subaddons" multiple="multiple">
         <!-- <option value="">Select..</option> -->
@@ -37,7 +37,8 @@
       </select>
     </div>
     <!-- Quantity -->
-    <div class="col border form-group">
+    <div class="col form-group">
+      <label for="quantity">Please Enter a Number</label>
       <input id="quantity" type="number" placeholder="Quantity" name="quantity" value="">
     </div>
     <!-- Buttons -->
