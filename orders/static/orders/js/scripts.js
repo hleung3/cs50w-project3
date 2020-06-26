@@ -1,4 +1,44 @@
+function checkData(form_name,data) {
+    var missing = false;
+    // check if fields are empty
+    for (var pair of data.entries()) {
+      if (pair[0] == "csrfmiddlewaretoken") {
+      }
+      else if (pair[1] == "" || !pair[1]) {
+        console.log("null",pair[0],pair[1]);
+        alert(`missing data please fill out ${form_name} form`);
+        missing = true;
+        return !(missing);
+      }
+      console.log(pair[0],pair[1],"!!!");
+    }
+    if (form_name == "Pizza") {
+      // check if toppings selected match number selected
+      const list_toppings = data.getAll("list_toppings");
+      console.log(list_toppings)
+      let test = list_toppings.every(function(e) {
+        return typeof e;
+      });
+      console.log(test)
+      const num_toppings = parseInt(data.get("num_toppings"));
+      if ((num_toppings == parseInt(list_toppings[0])) &&
+          (num_toppings == 0)) {
+        // Cheese pizza exception (num_topp == 0) and (list_top selected default option 0)
+      } else if (num_toppings != list_toppings.length) {
+        if ("0" in list_toppings) {
+          alert("remove select.. from toppings");
+          return false;
+        }
+        alert("please select the correct number of toppings");
+        return false;
+      }
+    }
+    console.log(!(missing));
+    return !(missing);
+}
+
 function addToCart(data) {
+  // make request to django app (orders/add_to_cart)
   return new Promise(function(resolve, reject) {
     const request = new XMLHttpRequest();
     request.onload = function() {
@@ -6,321 +46,6 @@ function addToCart(data) {
     };
     request.onerror = reject;
     request.open("POST", "add-to-cart");
-    request.send(data);
-  });
-}
-
-function compileModalTemplate(product_class, product_name, product_id, showModal) {
-  let context = {
-    "product_class": product_class,
-    "product_class_hr": product_class,
-    "product_name": product_name,
-    "product_id": product_id,
-    "size": false,
-    "size_values": [],
-    "subaddons": false,
-    "subaddons_values": [],
-    "toppings": false,
-    "toppings_list": [],
-    "toppings_count": []
-  };
-
-  if (product_class == "DinnerPlatterName") {
-    getSizes(context.product_class, context.product_id)
-      .then(function(result) {
-        // Set context
-        context.size = true;
-        context.size_values = result;
-        context.product_class_hr = "Dinner Platter";
-      })
-      .then(function(result) {
-        // Compile modal window
-        const template = document.querySelector("#modal-template").innerHTML;
-        const templateScript = Handlebars.compile(template);
-        const html = templateScript(context);
-        document.querySelector("#modal-placeholder").innerHTML = html;
-      })
-      .then(function(result) {
-        // Add onclick event
-        document.querySelector("#add-to-cart").onclick = (e) => {
-          data = new FormData(document.querySelector("#add-to-cart-form"));
-          data.append("product_class", context.product_class);
-          data.append("product_name", context.product_name);
-          data.append("product_id", context.product_id);
-          addToCart(data)
-            .then(function(result) {
-              // Close modal window
-              $("#modalProduct").modal("hide");
-
-              // Set price
-              setOrderPrice(result.order_price);
-            })
-            .then(function(result) {
-              // Remove modal window html content
-              document.querySelector("#modal-placeholder").innerHTML = "";
-            });
-        };
-      })
-      .then(function(result) {
-        $('#modalProduct').on('hidden.bs.modal', function (e) {
-          document.querySelector("#modal-placeholder").innerHTML = "";
-        });
-      })
-      .then(function(result) {
-        // Show modal if specified
-        if (showModal) {
-          $("#modalProduct").modal("show");
-        }
-      });
-  } else if (product_class == "Salad") {
-      context.product_class_hr = "Salad";
-
-      // Compile modal window
-      const template = document.querySelector("#modal-template").innerHTML;
-      const templateScript = Handlebars.compile(template);
-      const html = templateScript(context);
-      document.querySelector("#modal-placeholder").innerHTML = html;
-
-      // Add onclick event
-      document.querySelector("#add-to-cart").onclick = (e) => {
-        data = new FormData(document.querySelector("#add-to-cart-form"));
-        data.append("product_class", context.product_class);
-        data.append("product_name", context.product_name);
-        data.append("product_id", context.product_id);
-        addToCart(data)
-          .then(function(result) {
-            // Close modal window
-            $("#modalProduct").modal("hide");
-
-            // Set price
-            setOrderPrice(result.order_price);
-          })
-          .then(function(result) {
-            // Remove modal window html content
-            document.querySelector("#modal-placeholder").innerHTML = "";
-          });
-      };
-
-      $('#modalProduct').on('hidden.bs.modal', function (e) {
-        document.querySelector("#modal-placeholder").innerHTML = "";
-      });
-
-      // Show modal if specified
-      if (showModal) {
-        $("#modalProduct").modal("show");
-      }
-  } else if (product_class == "Pasta") {
-    context.product_class_hr = "Pasta";
-
-    // Compile modal window
-    const template = document.querySelector("#modal-template").innerHTML;
-    const templateScript = Handlebars.compile(template);
-    const html = templateScript(context);
-    document.querySelector("#modal-placeholder").innerHTML = html;
-
-    // Add onclick event
-    document.querySelector("#add-to-cart").onclick = (e) => {
-      data = new FormData(document.querySelector("#add-to-cart-form"));
-      data.append("product_class", context.product_class);
-      data.append("product_name", context.product_name);
-      data.append("product_id", context.product_id);
-      addToCart(data)
-        .then(function(result) {
-          // Close modal window
-          $("#modalProduct").modal("hide");
-
-          // Set price
-          setOrderPrice(result.order_price);
-        })
-        .then(function(result) {
-          // Remove modal window html content
-          document.querySelector("#modal-placeholder").innerHTML = "";
-        });
-    };
-
-    $('#modalProduct').on('hidden.bs.modal', function (e) {
-      document.querySelector("#modal-placeholder").innerHTML = "";
-    });
-
-    // Show modal if specified
-    if (showModal) {
-      $("#modalProduct").modal("show");
-    }
-  } else if (product_class == "Sub") {
-    const promise1 = getSizes(context.product_class, context.product_id);
-    const promise2 = getSubsAddons();
-
-    Promise.all([promise1, promise2])
-      .then(function(values) {
-        // Set context
-        context.product_class_hr = "Sub";
-        context.size = true;
-        context.size_values = values[0];
-        context.subaddons = true;
-        context.subaddons_values = values[1];
-      })
-      .then(function(result) {
-        // Compile modal window
-        const template = document.querySelector("#modal-template").innerHTML;
-        const templateScript = Handlebars.compile(template);
-        const html = templateScript(context);
-        document.querySelector("#modal-placeholder").innerHTML = html;
-      })
-      .then(function(result) {
-        // Add onclick event
-        document.querySelector("#add-to-cart").onclick = (e) => {
-          data = new FormData(document.querySelector("#add-to-cart-form"));
-          data.append("product_class", context.product_class);
-          data.append("product_name", context.product_name);
-          data.append("product_id", context.product_id);
-          data.append("subaddons", data.getAll("subaddons"));
-          addToCart(data)
-            .then(function(result) {
-              // Close modal window
-              $("#modalProduct").modal("hide");
-
-              // Set price
-              setOrderPrice(result.order_price);
-            })
-            .then(function(result) {
-              // Remove modal window html content
-              document.querySelector("#modal-placeholder").innerHTML = "";
-            });
-        };
-      })
-      .then(function(result) {
-        $('#modalProduct').on('hidden.bs.modal', function (e) {
-          document.querySelector("#modal-placeholder").innerHTML = "";
-        })
-      })
-      .then(function(result) {
-        // Show modal if specified
-        if (showModal) {
-          $("#modalProduct").modal("show");
-        }
-      });
-  } else if (product_class == "PizzaName") {
-    const promise1 = getSizes(context.product_class, context.product_id);
-    const promise2 = getToppings();
-    const promise3 = getToppingsCount(context.product_id);
-
-    Promise.all([promise1, promise2, promise3])
-      .then(function(values) {
-        // Set context
-        context.product_class_hr = "Pizza";
-        context.size = true;
-        context.size_values = values[0];
-        context.toppings = true;
-        context.toppings_list = values[1];
-        values[2].forEach((item) => {
-          context.toppings_count.push(item);
-        });
-      })
-      .then(function(result) {
-        // Compile modal window
-        const template = document.querySelector("#modal-template").innerHTML;
-        const templateScript = Handlebars.compile(template);
-        const html = templateScript(context);
-        document.querySelector("#modal-placeholder").innerHTML = html;
-      })
-      .then(function(result) {
-        // Add onclick event
-        document.querySelector("#add-to-cart").onclick = (e) => {
-          data = new FormData(document.querySelector("#add-to-cart-form"));
-
-          const tops_count = data.get("toppings_count");
-          const tops = data.getAll("toppings").length;
-
-          if (tops_count != tops) {
-            alert("Your should choose selected amount of toppings");
-            return false;
-          }
-
-          data.append("product_class", context.product_class);
-          data.append("product_name", context.product_name);
-          data.append("product_id", context.product_id);
-          data.append("toppings", data.getAll("toppings"));
-          addToCart(data)
-            .then(function(result) {
-              // Close modal window
-              $("#modalProduct").modal("hide");
-
-              // Set price
-              setOrderPrice(result.order_price);
-            })
-            .then(function(result) {
-              // Remove modal window html content
-              document.querySelector("#modal-placeholder").innerHTML = "";
-            });
-        };
-      })
-      .then(function(result) {
-        $('#modalProduct').on('hidden.bs.modal', function (e) {
-          document.querySelector("#modal-placeholder").innerHTML = "";
-        })
-      })
-      .then(function(result) {
-        // Show modal if specified
-        if (showModal) {
-          $("#modalProduct").modal("show");
-        }
-      });
-  }
-}
-
-function getSizes(product_class, product_id) {
-  return new Promise(function(resolve, reject) {
-    const request = new XMLHttpRequest();
-    request.onload = function() {
-      resolve(JSON.parse(this.responseText));
-    };
-    request.onerror = reject;
-    request.open("POST", "get-sizes");
-
-    const data = new FormData();
-    data.append("product_class", product_class);
-    data.append("product_id", product_id);
-    request.send(data);
-  });
-}
-
-function getSubsAddons() {
-  return new Promise(function(resolve, reject) {
-    const request = new XMLHttpRequest();
-    request.onload = function() {
-      resolve(JSON.parse(this.responseText));
-    };
-    request.onerror = reject;
-    request.open("POST", "get-subs-addons");
-
-    request.send();
-  });
-}
-
-function getToppings() {
-  return new Promise(function(resolve, reject) {
-    const request = new XMLHttpRequest();
-    request.onload = function() {
-      resolve(JSON.parse(this.responseText));
-    };
-    request.onerror = reject;
-    request.open("POST", "get-toppings");
-
-    request.send();
-  });
-}
-
-function getToppingsCount(product_id) {
-  return new Promise(function(resolve, reject) {
-    const request = new XMLHttpRequest();
-    request.onload = function() {
-      resolve(JSON.parse(this.responseText));
-    };
-    request.onerror = reject;
-    request.open("POST", "get-toppings-count");
-
-    const data = new FormData();
-    data.append("product_id", product_id);
     request.send(data);
   });
 }
@@ -338,11 +63,15 @@ function getOrderPrice() {
   });
 }
 
+
+
 function setOrderPrice(order_price) {
+  // update user's current order price
   const span = document.querySelector("#order-price");
   span.innerText = "$" + order_price;
 
   const a = span.closest("a");
+  // if order price is zero --> link and span are not clickable
   if (order_price == 0) {
     if (!a.classList.contains("disabled")) {
       a.classList.add("disabled");
@@ -367,15 +96,74 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(function(result) {
       setOrderPrice(result.order_price);
     });
-
-  // Click "Add to cart"
-  document.querySelectorAll(".add-to-order").forEach((element) => {
+  const subtype = document.querySelector("#sub-type");
+  subtype.addEventListener("click", (e) => {
+    document.querySelectorAll(".steak-cheese").forEach((element) => {
+      if ((element.style.display == "none") &&
+      (subtype.options[subtype.selectedIndex].text == "Steak + Cheese")) {
+        element.style.display = "block";
+      } else {
+        element.style.display = "none";
+      }
+    });
+  });
+  //
+  // define "Add to Order" button behaviour
+  document.querySelectorAll(".order-button").forEach((element) => {
     element.onclick = (e) => {
-      const product_class = e.target.dataset.productClass;
-      const product_name = e.target.dataset.productName;
-      const product_id = e.target.dataset.productId;
-
-      compileModalTemplate(product_class, product_name, product_id, true);
+      const form_name = e.target.dataset.formName;
+      if (form_name == "Pizza") {
+        console.log(form_name);
+        const pizza_form = document.querySelector("#pizza-form");
+        let data = new FormData(pizza_form);
+        data.append("product_class",e.target.dataset.productClass);
+        const pizza_num = document.querySelector("#pizza-number").value;
+        data.append("quantity",pizza_num);
+        if (checkData(form_name,data)) {
+          addToCart(data)
+            .then(function(result) {
+              alert("added to cart");
+              setOrderPrice(result.order_price);
+            })
+        }
+      }
+      else if (form_name == "Sub") {
+        console.log("Sub add to order")
+        let data = new FormData(document.querySelector("#sub-form"));
+        data.append("product_class",e.target.dataset.productClass);
+        if (checkData(form_name,data)) {
+          addToCart(data)
+            .then(function(result) {
+              alert("added to cart");
+              setOrderPrice(result.order_price);
+            })
+        }
+      }
+      else if (form_name == "Platter") {
+        console.log("platter add to order")
+        let data = new FormData(document.querySelector("#platter-form"));
+        data.append("product_class",e.target.dataset.productClass);
+        if (checkData(form_name,data)) {
+          addToCart(data)
+            .then(function(result) {
+              alert("added to cart");
+              setOrderPrice(result.order_price);
+            })
+        }
+      }
+      else {
+        // salad and pasta share the same format
+        console.log(form_name);
+        let data = new FormData(document.querySelector(`#${form_name}-form`));
+        data.append("product_class",e.target.dataset.productClass);
+        if (checkData(form_name,data)) {
+          addToCart(data)
+            .then(function(result) {
+              alert("added to cart");
+              setOrderPrice(result.order_price);
+            })
+        }
+      }
       return false;
     };
   });

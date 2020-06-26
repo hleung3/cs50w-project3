@@ -11,27 +11,36 @@ from .models import Order, OrderPizza, OrderSub, OrderPasta, OrderSalad, OrderDi
 
 
 def index(request):
+    # retrieve all menu items from DB and redner with index.html
     context = {
-        "pizzas": PizzaName.objects.all(),
+        "pizza_names": PizzaName.objects.all(),
+        "sizes": Size.objects.all(),
+        "toppings":Topping.objects.all(),
+        "toppings_count":[0,1,2,3,5],
         "subs": SubName.objects.all(),
+        "subs_extra":SubAddon.objects.all(),
         "pastas": Pasta.objects.all(),
         "salads": Salad.objects.all(),
         "dinner_platters": DinnerPlatterName.objects.all()
     }
+    # print(context)
     return render(request, "orders/index.html", context=context)
 
 
 def register_view(request):
     if request.method == "GET":
+        # access register.html
         return render(request, "orders/register.html")
 
     if request.method == "POST":
+        # after user submits information -> save to db
         username = request.POST["username"]
         first_name = request.POST["first_name"]
         last_name = request.POST["last_name"]
         email = request.POST["email"]
         password = request.POST["password"]
 
+        # user object for django ORM
         user = User.objects.create_user(
             username=username,
             email=email,
@@ -40,26 +49,32 @@ def register_view(request):
         user.first_name = first_name
         user.last_name = last_name
         user.save()
-
+        # go back to index page
         return HttpResponseRedirect(reverse("index"))
 
 def login_view(request):
+    # user wants to log in to make order - authenticate user credentials
     if request.method == "GET":
+        # access login page
         return render(request, "orders/login.html")
 
     if request.method == "POST":
+        # when user provides info - check against User table with django/authenticate()
         username = request.POST["username"]
         password = request.POST["password"]
 
         user = authenticate(request, username=username, password=password)
         if user is not None:
+            # success --> go to index
             login(request, user)
             return HttpResponseRedirect(reverse("index"))
         else:
+            # fail --> stay on login
             return HttpResponseRedirect(reverse("login"))
 
 
 def logout_view(request):
+    # end user session --> go back to main menu page
     logout(request)
     return HttpResponseRedirect(reverse("index"))
 
@@ -67,33 +82,40 @@ def logout_view(request):
 @csrf_exempt
 def add_to_cart(request):
     if request.method == "GET":
+        # no GET access
+        print("no access")
         return HttpResponseNotAllowed()
-
+    print(request.POST)
+    # get orders made by user and not sent/confirmed
     order = Order.objects.filter(user__pk=request.user.id).filter(order_sent=False)
     if order.count() == 0:
+        # ^no orders found --> create new order for user
         order = Order(user=request.user)
         order.save()
     else:
+        # select first order found
         order = order[0]
 
-    # Get product data
+    # Get product data from request
+    print("ASDFaa11")
     try:
         product_class = request.POST["product_class"]
         product_name = request.POST["product_name"]
-        product_id = int(request.POST["product_id"])
+        # product_id = int(request.POST["product_id"])
     except (KeyError, ValueError):
         return HttpResponseBadRequest()
 
     # Get other request parameters
     quantity = int(request.POST["quantity"])
-
-    # Add to order
+    print(quantity,product_name)
+    # Add to order_(food) in DB i.e. save food details to order_(food) table
+    #                                and link to unsent order by user
     if product_class == "DinnerPlatterName":
         order_dinner_platter = OrderDinnerPlatter(
             order=order,
             dinner_platter=DinnerPlatter.objects.get(
-                name=DinnerPlatterName.objects.get(name=product_name),
-                size=Size.objects.get(pk=int(request.POST["size"]))
+                name=DinnerPlatterName.objects.get(pk=int(product_name)),
+                size=Size.objects.get(pk=int(request.POST["platter-size"]))
             ),
             quantity=quantity
         )
@@ -103,7 +125,7 @@ def add_to_cart(request):
         order_salad = OrderSalad(
             order=order,
             salad=Salad.objects.get(
-                name=Salad.objects.get(name=product_name)
+                name=Salad.objects.get(pk=int(product_name))
             ),
             quantity=quantity
         )
@@ -113,7 +135,7 @@ def add_to_cart(request):
         order_pasta = OrderPasta(
             order=order,
             pasta=Pasta.objects.get(
-                name=Pasta.objects.get(name=product_name)
+                name=Pasta.objects.get(pk=int(product_name))
             ),
             quantity=quantity
         )
@@ -123,8 +145,8 @@ def add_to_cart(request):
         order_sub = OrderSub(
             order=order,
             sub=Sub.objects.get(
-                name=SubName.objects.get(name=product_name),
-                size=Size.objects.get(pk=int(request.POST["size"]))
+                name=SubName.objects.get(pk=int(product_name)),
+                size=Size.objects.get(pk=int(request.POST["sub-size"]))
             ),
             quantity=quantity
         )
@@ -137,27 +159,33 @@ def add_to_cart(request):
 
         order.save()
     elif product_class == "PizzaName":
+        print(request.POST["pizza_size"])
+        query_size = Size.objects.get(name=request.POST["pizza_size"])
+        print(query_size)
         order_pizza = OrderPizza(
             order=order,
             pizza=Pizza.objects.get(
-                name=PizzaName.objects.get(name=product_name),
-                size=Size.objects.get(pk=int(request.POST["size"])),
-                toppings_count=int(request.POST["toppings_count"])
+                name=PizzaName.objects.get(pk=int(product_name)),
+                size=query_size,
+                toppings_count=int(request.POST["num_toppings"])
             ),
             quantity=quantity
         )
         order_pizza.save()
-        for topping_id in request.POST.get("toppings", []).split(","):
-            order_pizza.toppings.add(
-                Topping.objects.get(pk=int(topping_id))
-            )
+        # if num toppings is not plain cheese
+        if int(request.POST["num_toppings"]) > 0:
+            for topping_id in request.POST.get("list_toppings"):
+                order_pizza.toppings.add(
+                    Topping.objects.get(pk=int(topping_id))
+                )
         order_pizza.save()
 
         order.save()
     else:
+        print("ASASDF")
         return HttpResponseNotFound()
 
-
+    print("GOOD")
     return JsonResponse({
         "order_price": order.get_order_price(),
         "order_id": order.id
@@ -191,7 +219,7 @@ def get_sizes(request):
 
     product_class = request.POST["product_class"]
     product_id = request.POST["product_id"]
-
+    # select size info for each product type --> return as JSON
     if product_class == "DinnerPlatterName":
         objects = DinnerPlatter.objects.filter(name__pk=product_id)
         sizes = [{"size_name": x.size.name, "size_value": x.size.pk} for x in objects]
@@ -236,6 +264,18 @@ def get_toppings(request):
 
     return JsonResponse(toppings, safe=False)
 
+# @csrf_exempt
+# def get_pizza(request):
+#     print("get-pizza")
+#     if request.method == "GET":
+#         return HttpResponseNotAllowed()
+#
+#     pizza_all = Pizzas.objects.all()
+#     toppings = []
+#     if toppings_all.count() > 0:
+#         toppings = [{"topping_name": x.name, "topping_value": x.pk} for x in toppings_all]
+#
+#     return JsonResponse(toppings, safe=False)
 
 @csrf_exempt
 def get_toppings_count(request):
@@ -273,17 +313,21 @@ def get_current_order_price(request):
 @csrf_exempt
 def confirm_order_final(request):
     if request.method == "POST":
+        # select tentative orders created by current user
         order = Order.objects.filter(user__pk=request.user.id).filter(order_sent=False)
         if order.count() == 0:
+            # no orders found - empty response and reject request
             return HttpResponseNotFound()
         else:
+            # ?? Get first order ??
             order = order[0]
-
+        # ^ selected order is now sent --> success response
         order.order_sent = True
         order.save()
 
         return JsonResponse({"success": True}, safe=False)
     else:
+        # GET request not allowed
         return HttpResponseNotAllowed()
 
 
