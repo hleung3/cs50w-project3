@@ -1,0 +1,179 @@
+{% extends "orders/base.html" %}
+
+{% block title %}
+  <title>PizzaStore</title>
+{% endblock %}
+
+{% block modal_template %}
+  <script id="modal-template" type="text/x-handlebars-template">
+    {% include "orders/modal.html" %}
+  </script>
+{% endblock %}
+
+{% block maintitle %}
+{% endblock %}
+
+{% block content %}
+  <!-- Place modal window here -->
+  <div id="modal-placeholder"></div>
+
+  <!-- Pizzas -->
+  <div class="project-group text-center">
+    <h3 class="display-4">Pizza</h3>
+  </div>
+  <div class="row">
+    {% for pizza in pizzas %}
+      <div class="col-lg-4 col-md-6 card-deck">
+        <div class="card text-center">
+          <img class="card-img-top" src="{{ pizza.image.url }}" alt="{{ pizza.name }}" title="{{ pizza.name }}">
+          <div class="card-body">
+            <h5 class="card-title">{{ pizza.name }}</h5>
+            <p class="card-text">{{ pizza.description }}</p>
+            {% if user.is_authenticated %}
+              <button type="button" class="btn btn-primary add-to-order" data-toggle="modal" data-target="#modalProduct" data-product-class="PizzaName" data-product-name="{{ pizza.name }}" data-product-id={{ pizza.pk }}>
+                Add to order
+              </button>
+            {% endif %}
+          </div>
+          {% if not user.is_authenticated %}
+            <div class="card-footer text-muted">
+              Log in to add to order
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-lg col-md">
+        <p>Sorry, we run out of pizza</p>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Subs -->
+  <div class="project-group text-center">
+    <h3 class="display-4">Subs</h3>
+  </div>
+  <div class="row">
+    {% for sub in subs %}
+      <div class="col-lg-4 col-md-6 card-deck">
+        <div class="card text-center">
+          <img class="card-img-top" src="{{ sub.image.url }}" alt="{{ sub.name }}" title="{{ sub.name }}">
+          <div class="card-body">
+            <h5 class="card-title">{{ sub.name }}</h5>
+            <p class="card-text">{{ sub.description }}</p>
+            {% if user.is_authenticated %}
+              <button type="button" class="btn btn-primary add-to-order" data-toggle="modal" data-target="#modalProduct" data-product-class="Sub" data-product-name="{{ sub.name }}" data-product-id={{ sub.pk }}>
+                Add to order
+              </button>
+            {% endif %}
+          </div>
+          {% if not user.is_authenticated %}
+            <div class="card-footer text-muted">
+              Log in to add to order
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-lg col-md">
+        <p>Sorry, we run out of subs</p>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pastas -->
+  <div class="project-group text-center">
+    <h3 class="display-4">Pastas</h3>
+  </div>
+  <div class="row">
+    {% for pasta in pastas %}
+      <div class="col-lg-4 col-md-6 card-deck">
+        <div class="card text-center">
+          <img class="card-img-top" src="{{ pasta.image.url }}" alt="{{ pasta.name }}" title="{{ pasta.name }}">
+          <div class="card-body">
+            <h5 class="card-title">{{ pasta.name }}</h5>
+            <p class="card-text">{{ pasta.description }}</p>
+            {% if user.is_authenticated %}
+              <button type="button" class="btn btn-primary add-to-order" data-toggle="modal" data-target="#modalProduct" data-product-class="Pasta" data-product-name="{{ pasta.name }}" data-product-id={{ pasta.pk }}>
+                Add to order
+              </button>
+            {% endif %}
+          </div>
+          {% if not user.is_authenticated %}
+            <div class="card-footer text-muted">
+              Log in to add to order
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-lg col-md">
+        <p>Sorry, we run out of pastas</p>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Salads -->
+  <div class="project-group text-center">
+    <h3 class="display-4">Salads</h3>
+  </div>
+  <div class="row">
+    {% for salad in salads %}
+      <div class="col-lg-4 col-md-6 card-deck">
+        <div class="card text-center">
+          <img class="card-img-top" src="{{ salad.image.url }}" alt="{{ salad.name }}" title="{{ salad.name }}">
+          <div class="card-body">
+            <h5 class="card-title">{{ salad.name }}</h5>
+            <p class="card-text">{{ salad.description }}</p>
+            {% if user.is_authenticated %}
+              <button type="button" class="btn btn-primary add-to-order" data-toggle="modal" data-target="#modalProduct" data-product-class="Salad" data-product-name="{{ salad.name }}" data-product-id={{ salad.pk }}>
+                Add to order
+              </button>
+            {% endif %}
+          </div>
+          {% if not user.is_authenticated %}
+            <div class="card-footer text-muted">
+              Log in to add to order
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-lg col-md">
+        <p>Sorry, we run out of salads</p>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Dinner Platters -->
+  <div class="project-group text-center">
+    <h3 class="display-4">Dinner Platters</h3>
+  </div>
+  <div class="row">
+    {% for dinner_platter in dinner_platters %}
+      <div class="col-lg-4 col-md-6 card-deck">
+        <div class="card text-center">
+          <img class="card-img-top" src="{{ dinner_platter.image.url }}" alt="{{ dinner_platter.name }}" title="{{ dinner_platter.name }}">
+          <div class="card-body">
+            <h5 class="card-title">{{ dinner_platter.name }}</h5>
+            <p class="card-text">{{ dinner_platter.description }}</p>
+            {% if user.is_authenticated %}
+              <button type="button" class="btn btn-primary add-to-order" data-toggle="modal" data-target="#modalProduct" data-product-class="DinnerPlatterName" data-product-name="{{ dinner_platter.name }}" data-product-id={{ dinner_platter.pk }}>
+                Add to order
+              </button>
+            {% endif %}
+          </div>
+          {% if not user.is_authenticated %}
+            <div class="card-footer text-muted">
+              Log in to add to order
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-lg col-md">
+        <p>Sorry, we run out of dinner platters</p>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

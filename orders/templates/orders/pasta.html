@@ -1,0 +1,40 @@
+<h5 style="margin:auto">Pasta</h5>
+<form id="pasta-form">
+  <div class="row border form-group" style="padding:2%">
+    <!-- image -->
+    <div class="col">
+      <img src="media/no_photo.png" alt="No photo" style="width:100px">
+    </div>
+    <!-- dinner name -->
+    <div class="col dropdown form-group">
+      <label for="product_name">Pastas</label>
+      <select id="sub-type" class="form-control" name="product_name">
+        <option value="0">Select ..</option>
+        {% for item in pastas %}
+        <option value="{{item.pk}}">{{item.name}}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- Quantity -->
+    <div class="col border form-group">
+      <input id="quantity" type="number" placeholder="Quantity" name="quantity" value="">
+    </div>
+    <!-- Buttons -->
+    <div class="col form-group">
+      {% if user.is_authenticated %}
+        <button type="submit" class="pasta-order order-button btn btn-danger"
+          name="button" data-product-class="Pasta" data-form-name="pasta">
+          Add to order
+        </button>
+        <button type="reset" class="btn btn-warning" name="button" style="float:right">
+          Clear Selection
+        </button>
+      {% else %}
+      <div class="card-footer text-muted">
+        Log in to add to order
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</form>

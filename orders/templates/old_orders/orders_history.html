@@ -1,0 +1,45 @@
+{% extends "orders/base.html" %}
+
+{% block title %}
+  <title>PizzaStore</title>
+{% endblock %}
+
+{% block modal_template %}
+{% endblock %}
+
+{% block maintitle %}
+  Orders history
+{% endblock %}
+
+{% block content %}
+  {% if orders %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th>Created at</th>
+          <th>Price</th>
+          <th>Completed</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+          <tr>
+            <td scope="row"><a href="{% url 'order' order.id %}">{{ forloop.counter }}</a></td>
+            <td>{{ order.created }}</td>
+            <td>{{ order.get_order_price }}</td>
+            <td>
+              {% if order.order_completed %}
+                Yes
+              {% else %}
+                No
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <strong>There is no orders</strong>
+  {% endif %}
+{% endblock %}

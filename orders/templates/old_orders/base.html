@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+{% load static %}
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="CS50Web project 3">
+
+    {% block title %}
+    {% endblock %}
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="{% static 'orders/css/style.css' %}" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css?family=Rock+Salt&display=swap" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.2/handlebars.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    {% block modal_template %}{% endblock %}
+    <script src="{% static 'orders/js/scripts.js' %}"></script>
+    <script src="{% static 'orders/js/confirm.js' %}"></script>
+    <script src="{% static 'orders/js/remove.js' %}"></script>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-light bg-primary fixed-top">
+      <a id="brand-logo" class="navbar-brand" href="{% url 'index' %}">Django's Pizzeria</a>
+    </nav>
+
+    <div id="container-main" class="container-fluid">
+      <div class="row">
+        <div class="col-lg-2 offset-lg-2 col-md-2" id="side-nav">
+          <div class="list-group">
+            <a href="{% url 'index' %}" class="list-group-item list-group-item-action">Home</a>
+          </div>
+          <div id="greeting" class="text-center">
+            <h4>
+              {% if user.is_authenticated %}
+                Hello, <strong>{{ user.username }}</strong>!
+              {% else %}
+                Hello, stranger!
+              {% endif %}
+            </h4>
+          </div>
+          <div class="list-group">
+            {% if user.is_authenticated %}
+              <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" href="{% url 'order' %}">
+                Your order <span id="order-price" class="badge badge-primary badge-pill">$0</span>
+              </a>
+              <a class="list-group-item list-group-item-action" href="{% url 'orders_history' %}">Orders history</a>
+              <a class="list-group-item list-group-item-action" href="{% url 'logout' %}">Log out</a>
+            {% else %}
+              <a class="list-group-item list-group-item-action" href="{% url 'login' %}">Log in</a>
+              <a class="list-group-item list-group-item-action" href="{% url 'register' %}">Register</a>
+            {% endif %}
+          </div>
+        </div>
+
+        <main class="col-lg-6 col-md-10">
+          <h2 class="text-center">
+            {% block maintitle %}
+            {% endblock %}
+          </h2>
+
+          {% block content %}
+          {% endblock %}
+        </main>
+      </div>
+    </div>
+
+    <!-- <footer class="bg-transparent fixed-bottom text-center">
+      <p class="bg-light">
+        Made by <a href="mailto:sgtstrom@gmail.com">Strom</a> for CS50Web course
+      </p>
+    </footer> -->
+  </body>
+</html>

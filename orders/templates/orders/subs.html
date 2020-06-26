@@ -1,0 +1,60 @@
+<h5 style="margin:auto">Subs</h5>
+<form id="sub-form">
+  <div class="row border form-group" style="padding:2%">
+    <!-- image -->
+    <div class="col">
+      <img src="media/no_photo.png" alt="No photo" style="width:100px">
+    </div>
+    <div class="col dropdown form-group">
+      <label for="product_name">Sub Types</label>
+      <select id="sub-type" class="form-control" name="product_name">
+        <option value="0">Select ..</option>
+        {% for sub in subs%}
+            <option value="{{sub.pk}}">{{sub.name}}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col dropdown form-group">
+      <label for="subaddons"> Sub Addons</label>
+      <select class="form-control" name="subaddons" multiple="multiple">
+        <!-- <option value="">Select..</option> -->
+        {% for addon in subs_extra %}
+          {% if addon.name == 'Extra Cheese' %}
+            <option value="{{ addon.id }}">{{addon.name}} : {{addon.price}}</option>
+          {% else %}
+            <option class="steak-cheese" value="{{ addon.id }}">{{addon.name}} : {{addon.price}}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col dropdown form-group">
+      <label for="sub-size">Sizes</label>
+      <select  class="form-control" name="sub-size">
+        <option value="">Select..</option>
+        {% for size in sizes %}
+          <option value="{{ size.id }}">{{ size.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <!-- Quantity -->
+    <div class="col border form-group">
+      <input id="quantity" type="number" placeholder="Quantity" name="quantity" value="">
+    </div>
+    <!-- Buttons -->
+    <div class="col form-group">
+      {% if user.is_authenticated %}
+        <button type="submit" class="sub-order order-button btn btn-danger"
+          name="button" data-product-class="Sub" data-form-name="Sub">
+          Add to order
+        </button>
+        <button type="reset" class="btn btn-warning" name="button" style="float:right">
+          Clear Selection
+        </button>
+      {% else %}
+      <div class="card-footer text-muted">
+        Log in to add to order
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</form>

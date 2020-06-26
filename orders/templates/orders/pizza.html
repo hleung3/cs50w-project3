@@ -1,0 +1,84 @@
+<form id="pizza-form">
+  {% csrf_token %}
+  <div class="row border form-group" style="padding:2%">
+    <div class="col" style="margin:2%">
+      <img src="media/no_photo.png" alt="No photo" style="width:100px">
+    </div>
+    <!-- pizza type -->
+    <div class="col dropdown form-group" style="">
+      <label for="product_name">Pizza Types</label>
+      <select class="form-control" name="product_name">
+          <option value="" selected="selected">Select..</option>
+        {% for pizza in pizza_names %}
+          <option value="{{ pizza.pk }}">{{ pizza.name }}</option>
+        {% empty %}
+        {% endfor %}
+      </select>
+    </div>
+    <!-- PIZZA SIZE -->
+    <div class="col dropdown form-group" >
+      <label for="pizza_size">Sizes</label>
+      <select class="form-control" name="pizza_size">
+        <option value="" selected="selected">Select..</option>
+        {% for size in sizes %}
+          <option>{{ size.name }}</option>
+        {% empty %}
+        {% endfor %}
+      </select>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
+      </div>
+    </div>
+    <!-- # of Toppings -->
+    <div class="form-group" style="margin:auto">
+      <label for="num_toppings"># of Toppings</label>
+      <select class="form-control" name="num_toppings">
+        <option value="" selected="selected">Select..</option>
+        {% for number in toppings_count %}
+          {% if number == 0 %}
+            <option value="{{ number }}">Cheese</option>
+          {% elif number == 5 %}
+            <option  value="{{ number }}">Special</option>
+          {% else %}
+            <option  value="{{ number }}">{{ number }}</option>
+          {% endif %}
+        {% empty %}
+        {% endfor %}
+      </select>
+    </div>
+    <!-- Toppings -->
+    <div class="form-group" style="margin:2%">
+      <label for="list_toppings">Toppings</label>
+      <select class="form-control" name="list_toppings" multiple="multiple">
+        <option value="0" selected="selected">Select..</option>
+        {% for topping in toppings %}
+          <option value="{{ topping.id }}">{{ topping.name }}</option>
+        {% empty %}
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col" style="float:right">
+      <input id="pizza-number" type="number" placeholder="Quantity" name="" value="">
+    </div>
+    <!-- Buttons -->
+    <div class="col" style="padding-top:1%">
+      <!-- Quantity -->
+      {% if user.is_authenticated %}
+        <button type="submit" class="pizza-order order-button btn btn-danger"
+          name="button" data-product-class="PizzaName" data-form-name="Pizza">
+          Add to order
+        </button>
+        <button type="reset" class=" btn btn-warning" name="button"
+        style="margin-right:1%;float:right"">
+          Clear Selection
+        </button>
+      {% else %}
+        <div class="card-footer text-muted">
+          Log in to add to order
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+
+</form>
