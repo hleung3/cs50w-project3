@@ -15,16 +15,11 @@ urlpatterns = [
     path("orders-history", views.orders_history, name="orders_history"),
 
     path("add-to-cart", views.add_to_cart),
-    # path("get-sizes", views.get_sizes),
-    # path("get-subs-addons", views.get_subs_addons),
-    # path("get-toppings", views.get_toppings),
-    # path("get-toppings-count", views.get_toppings_count),
     path("remove-from-cart", views.remove_from_cart),
 
     path("get-current-order-price", views.get_current_order_price),
     path("confirm-order-final", views.confirm_order_final),
     path("cancel-order", views.cancel_order),
 ]
-print(settings.STATIC_URL,settings.STATIC_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

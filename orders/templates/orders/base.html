@@ -37,8 +37,8 @@
           <div class="list-group">
             <a href="{% url 'index' %}" class="list-group-item list-group-item-action">Home</a>
           </div>
+          <!-- user greeting -->
           <div id="greeting" class="text-center">
-            <!-- user greeting -->
             <h4>
               {% if user.is_authenticated %}
                 Hello, <strong>{{ user.username }}</strong>!
