@@ -5,7 +5,7 @@ function checkData(form_name,data) {
       if (pair[0] == "csrfmiddlewaretoken") {
       }
       else if (pair[1] == "" || !pair[1]) {
-        alert(`missing data please fill out ${form_name} form`);
+        alert(`Field is missing in the ${form_name} form`);
         missing = true;
         return !(missing);
       }
@@ -22,10 +22,10 @@ function checkData(form_name,data) {
           (num_toppings == 0)) {
         // Cheese pizza exception (num_topp == 0) and (list_top selected default option 0)
       } else if (list_toppings.includes("0")) {
-        alert("remove select.. from toppings");
+        alert("Remove select.. from Toppings");
         return false;
       } else if (num_toppings != list_toppings.length) {
-        alert("please select the correct number of toppings");
+        alert("Please select the correct number of Toppings");
         return false;
       }
     }
@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (checkData(form_name,data)) {
           addToCart(data)
             .then(function(result) {
-              alert("added to cart");
+              alert("Added to Cart!");
               setOrderPrice(result.order_price);
             })
         }
@@ -93,7 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (checkData(form_name,data)) {
           addToCart(data)
             .then(function(result) {
-              alert("added to cart");
+              alert("Added to Cart!");
               setOrderPrice(result.order_price);
             })
         }
@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (checkData(form_name,data)) {
           addToCart(data)
             .then(function(result) {
-              alert("added to cart");
+              alert("Added to Cart!");
               setOrderPrice(result.order_price);
             })
         }
@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (checkData(form_name,data)) {
           addToCart(data)
             .then(function(result) {
-              alert("added to cart");
+              alert("Added to Cart!");
               setOrderPrice(result.order_price);
             })
         }

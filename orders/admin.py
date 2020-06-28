@@ -1,7 +1,6 @@
-from django.contrib import admin
-
+from django.contrib import admin, messages
+from django.utils.translation import ngettext
 from .models import Size, Topping, SubAddon, PizzaName, Pizza, SubName, Sub, Pasta, Salad, DinnerPlatterName, DinnerPlatter, Order
-
 
 class SizeAdmin(admin.ModelAdmin):
     pass
@@ -50,7 +49,22 @@ class DinnerPlatterAdmin(admin.ModelAdmin):
 class OrderAdmin(admin.ModelAdmin):
     list_display = ("user", "order_sent", "order_completed", "_get_pizzas_list", "_get_subs_list", "_get_pastas_list", "_get_salads_list", "_get_dinner_platters_list", "_get_order_price")
     readonly_fields = ("_get_pizzas_list", "_get_subs_list", "_get_pastas_list", "_get_salads_list", "_get_dinner_platters_list", "_get_order_price")
-
+    actions = ['mark_complete']
+    def mark_complete(self,request,queryset):
+        for item in queryset.all():
+            print(item.order_sent)
+            if !(item.order_sent):
+                error = self.message_user(request, ngettext(
+                'action was unsuccessful: order was not sent',
+                'action was unsuccessful: order was not sent',0), messages.ERROR)
+                return error
+        updated = queryset.update(order_completed=True)
+        self.message_user(request, ngettext(
+            '%d order was successfully marked as completed.',
+            '%d orders were successfully marked as completed.',
+            updated,
+        ) % updated, messages.SUCCESS)
+    mark_complete.short_description = "Mark order as complete"
     def _get_pizzas_list(self, obj):
         return obj.get_pizzas_list()
     _get_pizzas_list.short_description = 'Pizzas'
