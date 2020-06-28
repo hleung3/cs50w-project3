@@ -53,7 +53,7 @@ class OrderAdmin(admin.ModelAdmin):
     def mark_complete(self,request,queryset):
         for item in queryset.all():
             print(item.order_sent)
-            if !(item.order_sent):
+            if not item.order_sent:
                 error = self.message_user(request, ngettext(
                 'action was unsuccessful: order was not sent',
                 'action was unsuccessful: order was not sent',0), messages.ERROR)
